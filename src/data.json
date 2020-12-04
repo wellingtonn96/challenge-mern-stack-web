@@ -1,0 +1,27 @@
+[{
+  "name": "Eduardo",
+  "street": "Rua.Atica",
+  "city": "São Paulo",
+  "country": "Brasil",
+  "weight": 120,
+  "lat": -23.541,
+  "lng": -46.584
+},
+{
+  "name": "Fernando",
+  "street": "Av Brasil",
+  "city": "São Paulo",
+  "country": "Brasil",
+  "weight": 148,
+  "lat": -23.631650,
+  "lng": -46.439079
+},
+{
+  "name": "Juliana",
+  "street": "Av Paulista",
+  "city": "São Paulo",
+  "country": "Brasil",
+  "weight": 1262,
+  "lat": -23.223,
+  "lng": -46.686
+}]
