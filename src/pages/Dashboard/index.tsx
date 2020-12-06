@@ -1,21 +1,23 @@
 import React, { FormEvent, useCallback, useState, useEffect } from 'react';
 import { Icon, LeafletMouseEvent } from 'leaflet';
+import { FaTrash } from 'react-icons/fa';
 import { TileLayer, Map } from 'react-leaflet';
 import axios from 'axios';
 import api from '../../services/api';
 import { useToast } from '../../hooks/Toast';
 
 import MarkerCustomer from '../../components/Marker';
-import Header from '../../components/Header';
 
 import {
   Container,
+  ContainerCustomers,
   Field,
   FormContent,
   GeoLocationField,
   ButtonSave,
   ButtonReset,
   ButtonResetContent,
+  ButtonDelete,
 } from './styles';
 
 export const icon = new Icon({
@@ -84,8 +86,14 @@ const Dashboard: React.FC = () => {
       .then(response => {
         setData(response.data);
       })
-      .catch(error => console.log(error));
-  }, []);
+      .catch(error => {
+        addToast({
+          type: 'error',
+          title: 'Erro!',
+          description: error.message,
+        });
+      });
+  }, [addToast]);
 
   useEffect(() => {
     axios
@@ -156,9 +164,26 @@ const Dashboard: React.FC = () => {
     });
   }, []);
 
+  const deleteCustomer = useCallback(
+    async (id: string) => {
+      try {
+        await api.delete(`customer/${id}`);
+
+        const response = await api.get('customer');
+        setData(response.data);
+      } catch (error) {
+        addToast({
+          type: 'error',
+          title: 'Erro!',
+          description: error.message,
+        });
+      }
+    },
+    [addToast],
+  );
+
   return (
     <>
-      <Header />
       <Container zIndex={!!messages.length}>
         <FormContent>
           <form onSubmit={handleSubmit}>
@@ -245,6 +270,48 @@ const Dashboard: React.FC = () => {
           />
         </Map>
       </Container>
+      <ContainerCustomers>
+        {data.length > 0 && (
+          <div>
+            <p>Total de clientes: 15; Peso Total: Ticket Médio*: 301,4</p>
+            <table>
+              <thead>
+                <th>Nome</th>
+                <th>Rua</th>
+                <th>Cidade</th>
+                <th>Estado</th>
+                <th>Pais</th>
+                <th>Peso</th>
+                <th>Lat</th>
+                <th>Lng</th>
+                <th>Ações</th>
+              </thead>
+              <tbody>
+                {data.map(item => (
+                  <tr key={item._id}>
+                    <td>{item.name}</td>
+                    <td>{item.street}</td>
+                    <td>{item.city}</td>
+                    <td>{item.state}</td>
+                    <td>{item.country}</td>
+                    <td>{item.weight}</td>
+                    <td>{item.lat}</td>
+                    <td>{item.lng}</td>
+                    <td>
+                      <ButtonDelete
+                        type="button"
+                        onClick={() => deleteCustomer(item._id)}
+                      >
+                        <FaTrash color="#ffff" size={18} />
+                      </ButtonDelete>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </ContainerCustomers>
     </>
   );
 };
